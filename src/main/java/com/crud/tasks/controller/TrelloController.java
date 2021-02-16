@@ -5,9 +5,13 @@ import com.crud.tasks.domain.TrelloBoardDto;
 import com.crud.tasks.domain.TrelloCardDto;
 import com.crud.tasks.trello.client.TrelloClient;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClientException;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 //import java.util.Optional;
 //import java.util.Collections;
 
@@ -16,20 +20,33 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TrelloController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrelloController.class);
     private final TrelloClient trelloClient;
 
     @GetMapping("getTrelloBoards")
-    public void getTrelloBoards() {
+    public List<TrelloBoardDto> getTrelloBoards() {
 
-        List<TrelloBoardDto> trelloBoards = trelloClient.getTrelloBoards();
+        try {
+            List<TrelloBoardDto> trelloBoards = trelloClient.getTrelloBoards();
+            return Optional.ofNullable(trelloBoards)
+                    .orElse(Collections.emptyList())
+                    .stream()
+                    .filter(e -> Objects.nonNull(e.getId()) && Objects.nonNull(e.getName()))
+                    .filter(e -> e.getName().contains("Kodilla"))
+                    .collect(Collectors.toList());
 
-        trelloBoards.forEach(trelloBoardDto -> {
-            System.out.println(trelloBoardDto.getId() + " - " + trelloBoardDto.getName());
-            System.out.println("This board contains lists: ");
-            trelloBoardDto.getLists().forEach(trelloList ->
-                System.out.println(trelloList.getName() + " - " + trelloList.getId() + " - " + trelloList.isClosed())
-            );
-        });
+/*            trelloBoards.forEach(trelloBoardDto -> {
+                System.out.println(trelloBoardDto.getId() + " - " + trelloBoardDto.getName());
+                System.out.println("This board contains lists: ");
+                trelloBoardDto.getLists().forEach(trelloList ->
+                        System.out.println(trelloList.getName() + " - " + trelloList.getId() + " - " + trelloList.isClosed())
+                );
+            });*/
+        } catch (RestClientException e) {
+            LOGGER.error(e.getMessage(), e);
+            return Collections.emptyList();
+        }
+
 
  /*       Optional.ofNullable(trelloBoards).orElse(Collections.emptyList()).stream()
                 .filter(e -> (e.getName()!=null && !(e.getName().isEmpty())))

@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-//@AllArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Mail {
     private final String mailTo;

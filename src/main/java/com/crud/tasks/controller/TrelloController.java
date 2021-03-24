@@ -1,10 +1,10 @@
 package com.crud.tasks.controller;
 
-import com.crud.tasks.domain.CreatedTrelloCard;
+import com.crud.tasks.domain.CreatedTrelloCardDto;
 import com.crud.tasks.domain.TrelloBoardDto;
 import com.crud.tasks.domain.TrelloCardDto;
 import com.crud.tasks.service.TrelloService;
-import com.crud.tasks.trello.client.TrelloClient;
+import com.crud.tasks.trello.facade.TrelloFacade;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,19 +23,21 @@ import java.util.stream.Collectors;
 public class TrelloController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrelloController.class);
-    private final TrelloService trelloService;
+    private final TrelloFacade trelloFacade;
 
     @GetMapping("getTrelloBoards")
     public List<TrelloBoardDto> getTrelloBoards() {
+        return trelloFacade.fetchTrelloBoards();
+    }
 
-        try {
-            List<TrelloBoardDto> trelloBoards = trelloService.fetchTrelloBoards();
-            return Optional.ofNullable(trelloBoards)
-                    .orElse(Collections.emptyList())
-                    .stream()
-                    .filter(e -> Objects.nonNull(e.getId()) && Objects.nonNull(e.getName()))
-                    .filter(e -> e.getName().contains("Kodilla"))
-                    .collect(Collectors.toList());
+//        try {
+//            List<TrelloBoardDto> trelloBoards = trelloFacade.fetchTrelloBoards();
+//            return Optional.ofNullable(trelloBoards)
+//                    .orElse(Collections.emptyList())
+//                    .stream()
+//                    .filter(e -> Objects.nonNull(e.getId()) && Objects.nonNull(e.getName()))
+//                    .filter(e -> e.getName().contains("Kodilla"))
+//                    .collect(Collectors.toList());
 
 /*            trelloBoards.forEach(trelloBoardDto -> {
                 System.out.println(trelloBoardDto.getId() + " - " + trelloBoardDto.getName());
@@ -44,10 +46,10 @@ public class TrelloController {
                         System.out.println(trelloList.getName() + " - " + trelloList.getId() + " - " + trelloList.isClosed())
                 );
             });*/
-        } catch (RestClientException e) {
-            LOGGER.error(e.getMessage(), e);
-            return Collections.emptyList();
-        }
+//        } catch (RestClientException e) {
+//            LOGGER.error(e.getMessage(), e);
+//            return Collections.emptyList();
+//        }
 
 
  /*       Optional.ofNullable(trelloBoards).orElse(Collections.emptyList()).stream()
@@ -55,10 +57,10 @@ public class TrelloController {
                 .filter(e -> (e.getId()!=null && !(e.getId().isEmpty())))
                 .filter(e -> e.getName().contains("Kodilla"))
                 .forEach(e -> System.out.println(e.getId() + " " + e.getName()));*/
-    }
+//    }
 
     @PostMapping("createTrelloCard")
-    public CreatedTrelloCard createTrelloCard(@RequestBody TrelloCardDto trelloCardDto) {
-        return trelloService.createdTrelloCard(trelloCardDto);
+    public CreatedTrelloCardDto createTrelloCard(@RequestBody TrelloCardDto trelloCardDto) {
+        return trelloFacade.createCard(trelloCardDto);
     }
 }

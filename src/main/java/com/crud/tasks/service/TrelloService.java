@@ -33,7 +33,7 @@ public class TrelloService {
                         null,
                         SUBJECT,
                         "New card: " + trelloCardDto.getName() + " has been created on your Trello account"
-                        )
+                        ),"standard"
         ));
         return newCard;
     }

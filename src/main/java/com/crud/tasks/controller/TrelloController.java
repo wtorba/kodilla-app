@@ -25,7 +25,8 @@ public class TrelloController {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrelloController.class);
     private final TrelloFacade trelloFacade;
 
-    @GetMapping("getTrelloBoards")
+    //@GetMapping("getTrelloBoards")
+    @GetMapping("/boards")
     public List<TrelloBoardDto> getTrelloBoards() {
         return trelloFacade.fetchTrelloBoards();
     }
@@ -59,7 +60,8 @@ public class TrelloController {
                 .forEach(e -> System.out.println(e.getId() + " " + e.getName()));*/
 //    }
 
-    @PostMapping("createTrelloCard")
+    //@PostMapping("createTrelloCard")
+    @PostMapping("/cards")
     public CreatedTrelloCardDto createTrelloCard(@RequestBody TrelloCardDto trelloCardDto) {
         return trelloFacade.createCard(trelloCardDto);
     }
